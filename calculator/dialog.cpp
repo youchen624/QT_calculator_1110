@@ -166,7 +166,7 @@ void buttonCRAZYSwap(QGridLayout *glayout,SquareButton* a, SquareButton* b) {
     int r_a, c_a, rs_a, cs_a, r_b, c_b, rs_b, cs_b;
     int index_a = glayout->indexOf(a);
     int index_b = glayout->indexOf(b);
-    // if (index_a == -1 || index_b == -1) return;
+    if (index_a == -1 || index_b == -1) return;
     glayout->getItemPosition(
         index_a,
         &r_a,
@@ -212,6 +212,7 @@ void Dialog::funcInput() {
     case (FuncButtons::Cal): {
         cal(true);
         // num_l = 0;
+        has_num_l = false;
     } break;
 
     case (FuncButtons::Add):
@@ -220,13 +221,17 @@ void Dialog::funcInput() {
     case (FuncButtons::Div):
     {
         mode = bn;
-        if (num_l) {
-            return cal();
-        }
-        QString str = editInput->text();
-        bool ok;
-        num_l = str.toDouble(&ok);
-        editInput->setText(ok ? "" : "Error");
+        cal();
+        // QString str = editInput->text();
+        // bool ok;
+        // double td = str.toDouble(&ok);
+        // if (ok) {
+            // num_r = td;
+            // cal(num_l, num_r);
+        // } else {
+            // cal(num_l, num_r);
+        // }
+        // editInput->setText(ok ? "" : "Error");
     } break;
 
     case (FuncButtons::RND): {
@@ -253,27 +258,36 @@ void Dialog::funcInput() {
 void Dialog::enterInput() {};
 
 void Dialog::cal(bool review)  {
+    qDebug() << "num_l::" << num_l;
     QString str = editInput->text();
-    bool ok;
-    num_r = str.toDouble(&ok);
+    bool ok;// = false;
+    double t = str.toDouble(&ok);
     if (!ok) {
         return editInput->setText("Error");
     }
+    if (!has_num_l) {
+        num_l = t;
+        has_num_l = true;
+        qDebug() << "num_l:" << num_l;
+        return editInput->setText(review ? QString::number(num_l) : "");
+    }
+
     switch(mode) {
     case (FuncButtons::Add): {
-        num_l += num_r;
+        num_l += t;
     } break;
     case (FuncButtons::Sub): {
-        num_l -= num_r;
+        num_l -= t;
     } break;
     case (FuncButtons::Mul): {
-        num_l *= num_r;
+        num_l *= t;
     } break;
     case (FuncButtons::Div): {
-        num_l /= num_r;
+        num_l /= t;
     } break;
     }
     editInput->setText(review ? QString::number(num_l) : "");
+    qDebug() << "num_l" << num_l;
 }
 
 Dialog::~Dialog()

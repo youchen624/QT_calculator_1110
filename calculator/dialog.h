@@ -44,7 +44,8 @@ public:
     ~Dialog();
 
 private:
-    double num_l = 0, num_r = 0;
+    double num_l = 0;//, num_r = 0;
+    bool has_num_l = false;
     char mode = -1;
     QLineEdit *editInput;
     QGridLayout *editLayout;
